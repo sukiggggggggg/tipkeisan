@@ -188,30 +188,37 @@
     }
     /* ---------------------------------------------------- */
 
-    /* 最終合計と最小枚数エリア（変更なし） */
+    /* 最終合計と最小枚数エリアのスタイルを調整 */
     #final-total-area {
         margin-top: 6px;
         background-color: #f0f8ff;
         border: 1px solid #0056b3;
-        flex-shrink: 0; /* 縮小させない */
+        flex-shrink: 0;
+        padding: 3px;
     }
-    #final-total-value { font-size: 20px; /* フォントサイズを調整 */ font-weight: bold; color: #0056b3; }
+    #final-total-value { 
+        font-size: 26px; 
+        font-weight: bold; 
+        color: #0056b3; 
+    }
 
     #min-result-area {
         border: 1px solid #ff7b00;
         background-color: #fff0e6;
-        margin-top: 6px; /* 追加 */
-        flex-grow: 1; /* 残りのスペースを占める */
-        min-height: 100px; /* 最小高さを確保 */
+        margin-top: 6px;
+        /* flex-grow: 1; を削除し、固定の高さを設定 */
+        height: 160px; /* ▼【変更箇所1/3：CSS】最小枚数エリアに固定の高さを設定 */
         display: flex;
         flex-direction: column;
+        padding: 3px;
+        flex-shrink: 0; /* 縮小させない */
     }
     .min-total-container {
-        font-size: 15px; /* フォントサイズを調整 */
+        font-size: 15px;
         font-weight: bold;
     }
     #min-total-chips-count {
-        font-size: 17px; /* フォントサイズを調整 */
+        font-size: 22px;
         color: #d82d03;
     }
 
@@ -219,18 +226,19 @@
         list-style: none;
         padding: 0 4px;
         margin-top: 4px;
-        font-size: 13px; /* フォントサイズを調整 */
+        font-size: 14px;
         text-align: left;
-        flex-grow: 1; /* リストが利用可能なスペースを占める */
-        overflow-y: auto; /* リストが多い場合はスクロール可能に */
-        min-height: 0; /* flexアイテムのmin-heightデフォルト値を上書き */
+        /* flex-grow: 1; は残し、親の固定高さ内でスクロール可能にする */
+        flex-grow: 1; 
+        overflow-y: auto; /* ▼【変更箇所2/3：CSS】内容が溢れたらスクロール表示 */
+        min-height: 0; 
     }
     #min-combination-list li {
         display: flex;
-        justify-content: space-between;
-        padding: 1px 0; /* パディングを調整 */
+        justify-content: center;
+        gap: 8px;
+        padding: 1px 0;
     }
-    /* ▼【修正箇所1/2：CSS】最小枚数内訳の枚数を太字にする */
     #min-combination-list li > span:last-child { 
         font-weight: bold; 
     }
@@ -240,23 +248,23 @@
     .reset-btn {
         display: block;
         width: 100%;
-        padding: 8px; /* パディングを調整 */
-        margin-top: 8px; /* マージンを調整 */
+        padding: 8px;
+        margin-top: 8px;
         background-color: #ccc;
         border: none;
         border-radius: 3px;
-        font-size: 15px; /* フォントサイズを調整 */
+        font-size: 15px;
         cursor: pointer;
         font-weight: bold;
-        flex-shrink: 0; /* 縮小させない */
+        flex-shrink: 0; /* ▼【変更箇所3/3：CSS】リセットボタンが縮小されないように念のため設定 */
     }
 
     /* 区切り線（変更なし） */
     hr {
-        margin: 5px 0; /* マージンを調整 */
+        margin: 5px 0;
         border: 0;
         border-top: 1px solid #ccc;
-        flex-shrink: 0; /* 縮小させない */
+        flex-shrink: 0;
     }
 </style>
 </head>
@@ -449,7 +457,6 @@
 
             if (count > 0) {
                 const listItem = document.createElement('li');
-                // ▼【修正箇所2/2：JavaScript】枚数にもチップの色を適用
                 listItem.innerHTML = `
                     <span class="min-chip-label" style="color: ${chip.color};">・${chip.name} (${chip.value}):</span>
                     <span style="color: ${chip.color};">${count}枚</span>
@@ -463,18 +470,23 @@
             const greenChip = ALL_CHIPS_DATA.find(c => c.value === 1);
             if (greenChip) {
                  totalChips += remaining;
-                 const existingGreen = resultList.querySelector(`.min-chip-label[style*="${greenChip.color}"]`);
-                 if (existingGreen) {
+                 let existingGreenItem = null;
+                 // 既存の緑チップの表示を探す
+                 resultList.querySelectorAll('li').forEach(item => {
+                     if (item.querySelector(`.min-chip-label[style*="${greenChip.color}"]`)) {
+                         existingGreenItem = item;
+                     }
+                 });
+
+                 if (existingGreenItem) {
                      // 既存の緑の枚数を更新
-                     const countSpan = existingGreen.nextElementSibling;
+                     const countSpan = existingGreenItem.querySelector('span:last-child');
                      const currentCount = parseInt(countSpan.textContent.replace('枚', '')) || 0;
                      countSpan.textContent = `${currentCount + remaining}枚`;
-                     // 既存の要素にも念のため色を適用
                      countSpan.style.color = greenChip.color; 
                  } else {
                      // 新しく緑の行を追加
                      const listItem = document.createElement('li');
-                     // ▼【修正箇所2/2：JavaScript】枚数にもチップの色を適用
                      listItem.innerHTML = `
                         <span class="min-chip-label" style="color: ${greenChip.color};">・${greenChip.name} (${greenChip.value}):</span>
                         <span style="color: ${greenChip.color};">${remaining}枚</span>
@@ -488,7 +500,7 @@
         // 最小枚数リストが空の場合にメッセージを表示
         if (targetTotal > 0 && totalChips === 0) {
             const listItem = document.createElement('li');
-            listItem.textContent = `計算できるチップがありません。`;
+            listItem.innerHTML = `<span>計算できるチップがありません。</span>`;
             resultList.appendChild(listItem);
         } else if (targetTotal === 0) {
             // 合計0の場合は空にする
@@ -551,13 +563,12 @@
         updateAllCalculations();
     }
     
-    // ▼新規追加: 粒度選択ボタンのハンドラ
     function handleGranularityClick(event) {
         const button = event.target.closest('.granularity-btn');
         if (!button) return;
         
         const newGranularity = button.dataset.granularity;
-        if (currentGranularity === newGranularity) return; // 既に選択されている場合は何もしない
+        if (currentGranularity === newGranularity) return;
 
         currentGranularity = newGranularity;
         
@@ -568,7 +579,6 @@
         
         updateAllCalculations();
     }
-    // ----------------------------------------
 
     function resetInputs() {
         for (const id in chipCounts) {
@@ -588,7 +598,6 @@
         });
         document.querySelector('.multiplier-btn[data-multiplier="1"]').classList.add('active');
         
-        // 粒度もデフォルトにリセット
         currentGranularity = 'default';
         document.querySelectorAll('.granularity-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -601,13 +610,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('chip-selection-area').addEventListener('click', handleCountClick);
         document.getElementById('multiplier-area').addEventListener('click', handleMultiplierClick);
-        document.getElementById('granularity-area').addEventListener('click', handleGranularityClick); // ▼新規: イベントリスナーを追加
+        document.getElementById('granularity-area').addEventListener('click', handleGranularityClick);
 
         document.querySelectorAll('.count-btn[data-count="0"]').forEach(btn => {
             btn.classList.add('active');
         });
         document.querySelector('.multiplier-btn[data-multiplier="1"]').classList.add('active');
-        document.querySelector('.granularity-btn[data-granularity="default"]').classList.add('active'); // ▼新規: デフォルト粒度を設定
+        document.querySelector('.granularity-btn[data-granularity="default"]').classList.add('active');
 
         updateAllCalculations();
     });
