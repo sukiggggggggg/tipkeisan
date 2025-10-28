@@ -3,147 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チップ計算（最終版）</title>
+    <title>チップ計算（超縦コンパクト横並び版）</title>
     <style>
-        /* --- 基本とレスポンシブ設定 --- */
+        /* --- 基本設定 --- */
         body {
-            font-family: sans-serif;
-            margin: 0;
-            padding: 10px;
+            font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            margin: 0; 
+            padding: 3px; /* bodyのパディングをさらに削減 */
             background-color: #f4f4f4;
+            font-size: 16px; /* 全体のフォントサイズを微調整 */
         }
         .container {
-            max-width: 600px;
+            max-width: 500px; 
             margin: 0 auto;
-            padding: 15px;
+            padding: 8px 8px 12px 8px; /* 上下左右のパディングをさらに削減、下はリセットボタン用に確保 */
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px; /* 角を少しシャープに */
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* --- チップ入力グループ --- */
         .chip-group {
-            margin-bottom: 12px;
+            margin-bottom: 5px; /* グループ間の余白をさらに削減 */
+            padding: 6px; /* パディングを削減 */
             border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
+            border-radius: 3px;
         }
         .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 3px; /* 情報行下の余白を削減 */
         }
         .chip-label {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 16px; /* チップ名サイズを微調整 */
             display: flex;
             align-items: center;
         }
         .chip-dot {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            margin-right: 8px;
+            width: 15px; /* ドットサイズを削減 */
+            height: 15px;
+            margin-right: 6px; /* ドットとテキストの間隔を削減 */
             border: 1px solid #33333333;
         }
         .current-count {
-            font-size: 18px;
+            font-size: 16px;
             color: #0056b3;
-            min-width: 30px;
-            text-align: right;
             font-weight: bold;
         }
         .btn-group {
             display: flex;
-            gap: 5px;
+            gap: 3px; /* ボタン間隔をさらに詰める */
         }
-
-        /* --- カラーボタンのスタイル --- */
         .count-btn {
             flex-grow: 1;
-            padding: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f8f8f8;
+            padding: 4px 0; /* ボタン高さを削減 */
+            border-radius: 2px;
+            font-size: 12px; /* ボタンフォントサイズを削減 */
+            font-weight: bold;
             cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.1s, color 0.1s;
         }
-        /* 各チップの色を定義 */
-        .red-btn { background-color: #f29a9a; border-color: #c0392b; color: #333; }
-        .green-btn { background-color: #90ee90; border-color: #27ae60; color: #333; }
-        .black-btn { background-color: #a0a0a0; border-color: #2c3e50; color: #fff; }
-        .dark-blue-btn { background-color: #a9cce3; border-color: #2980b9; color: #333; }
-        .light-blue-btn { background-color: #d1ecf1; border-color: #3498db; color: #333; }
-
-        /* アクティブなボタン (選択時) は濃い色にする */
+        
+        /* --- カラーボタン定義 (変更なし) --- */
+        .red-btn { background-color: #f29a9a; border: 1px solid #c0392b; color: #333; }
+        .green-btn { background-color: #90ee90; border: 1px solid #27ae60; color: #333; }
+        .black-btn { background-color: #a0a0a0; border: 1px solid #2c3e50; color: #fff; }
+        .dark-blue-btn { background-color: #a9cce3; border: 1px solid #2980b9; color: #333; }
+        .light-blue-btn { background-color: #d1ecf1; border: 1px solid #3498db; color: #333; }
         .count-btn.active.red-btn { background-color: #c0392b; color: white; }
         .count-btn.active.green-btn { background-color: #27ae60; color: white; }
         .count-btn.active.black-btn { background-color: #2c3e50; color: white; }
         .count-btn.active.dark-blue-btn { background-color: #2980b9; color: white; }
         .count-btn.active.light-blue-btn { background-color: #3498db; color: white; }
         
-        /* --- 結果エリア --- */
-        #total-result-area, #min-result-area {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
+        /* === 横並びコンテナのスタイル === */
+        .top-results-row {
+            display: flex;
+            gap: 8px; /* 横の隙間を削減 */
+            margin-top: 6px; /* 上マージンを削減 */
+        }
+        .top-results-row > div {
+            flex: 1; 
+            margin-top: 0 !important;
+        }
+
+        /* --- 結果エリアの共通スタイル --- */
+        #total-result-area, #multiplier-area, #final-total-area, #min-result-area {
+            padding: 6px; /* パディングを削減 */
+            border-radius: 3px;
             text-align: center;
         }
+        .result-title { 
+            font-size: 13px; /* タイトルをさらに小さく */
+            font-weight: bold; 
+            margin-bottom: 2px; /* タイトル下マージンを削減 */
+        }
+        
+        /* 合計金額エリア */
         #total-result-area { background-color: #e6f7ff; }
-        #min-result-area { border: 1px solid #ff7b00; background-color: #fff0e6; }
-        .result-title { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
-        #current-total-value { font-size: 24px; font-weight: bold; color: #0056b3; }
-        #min-total-chips-count { font-size: 20px; font-weight: bold; color: #ff7b00; }
-        #min-combination-list { list-style: none; padding: 0; margin-top: 10px; font-size: 14px; text-align: left; }
-        #min-combination-list li { display: flex; justify-content: space-between; padding: 4px 0; }
-        .min-chip-label { font-weight: bold; } /* 最小枚数内訳のチップ名を強調 */
+        #current-total-value { font-size: 18px; font-weight: bold; color: #0056b3; } /* サイズをさらに小さく */
+        
+        /* 倍率エリア */
+        #multiplier-area {
+            background-color: #ffffe0;
+        }
+        .multiplier-btn-group {
+            display: flex;
+            gap: 3px; /* ボタン間隔をさらに詰める */
+            justify-content: center;
+        }
+        .multiplier-btn {
+            width: 30px; /* ボタン幅を削減 */
+            padding: 3px 0; /* ボタン高さを削減 */
+            font-size: 12px; /* フォントを削減 */
+            background-color: #f0f0f0;
+            border: 1px solid #999;
+        }
+        .multiplier-btn.active {
+            background-color: #ff7b00;
+            color: white;
+            border-color: #cc6200;
+        }
+
+        /* 最終合計と最小枚数エリア */
+        #final-total-area {
+            margin-top: 6px; /* 横並びコンテナの下に余白を追加 */
+            background-color: #f0f8ff;
+            border: 1px solid #0056b3; 
+        }
+        #final-total-value { font-size: 24px; font-weight: bold; color: #0056b3; } /* サイズを微調整 */
+
+        #min-result-area {
+            border: 1px solid #ff7b00; 
+            background-color: #fff0e6;
+        }
+        .min-total-container {
+            font-size: 16px; /* フォントサイズを微調整 */
+            font-weight: bold;
+        }
+        #min-total-chips-count { 
+            font-size: 18px; /* フォントサイズを微調整 */
+            color: #d82d03;
+        }
+
+        #min-combination-list { 
+            list-style: none; 
+            padding: 0 4px; /* パディングを削減 */
+            margin-top: 4px; /* マージンを削減 */
+            font-size: 14px; /* フォントサイズを削減 */
+            text-align: left; 
+        }
+        #min-combination-list li { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 1px 0; /* リスト行間の余白を最小限に */
+        }
         
         /* --- リセットボタン --- */
         .reset-btn {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin-top: 20px;
+            padding: 6px; /* ボタン高さを削減 */
+            margin-top: 12px; /* マージンを調整 */
             background-color: #ccc;
-            color: #333;
             border: none;
-            border-radius: 4px;
+            border-radius: 3px;
+            font-size: 14px;
             cursor: pointer;
-            font-size: 16px;
         }
-        .reset-btn:hover { background-color: #bbb; }
+        
+        /* 区切り線 */
+        hr {
+            margin: 5px 0; /* 区切り線の上下余白を最小限に */
+            border: 0;
+            border-top: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="chip-selection-area">
-        <div class="chip-group" data-chip-id="red" data-value="1">
-            <div class="info-row">
-                <span class="chip-label" style="color: #c0392b;">
-                    <span class="chip-dot" style="background-color: #c0392b;"></span>
-                    赤 (1)
-                </span>
-                <div>枚数: <span class="current-count" id="red-count">0</span></div>
-            </div>
-            <div class="btn-group">
-                <button class="count-btn red-btn" data-count="0">0</button>
-                <button class="count-btn red-btn" data-count="1">1</button>
-                <button class="count-btn red-btn" data-count="2">2</button>
-                <button class="count-btn red-btn" data-count="3">3</button>
-                <button class="count-btn red-btn" data-count="4">4</button>
-                <button class="count-btn red-btn" data-count="5">5</button>
-                <button class="count-btn red-btn" data-count="6">6</button>
-            </div>
-        </div>
-        <div class="chip-group" data-chip-id="green" data-value="2">
+        <div class="chip-group" data-chip-id="green" data-value="1">
             <div class="info-row">
                 <span class="chip-label" style="color: #27ae60;">
                     <span class="chip-dot" style="background-color: #27ae60;"></span>
-                    緑 (2)
+                    緑 (1)
                 </span>
                 <div>枚数: <span class="current-count" id="green-count">0</span></div>
             </div>
@@ -155,6 +201,24 @@
                 <button class="count-btn green-btn" data-count="4">4</button>
                 <button class="count-btn green-btn" data-count="5">5</button>
                 <button class="count-btn green-btn" data-count="6">6</button>
+            </div>
+        </div>
+        <div class="chip-group" data-chip-id="red" data-value="2">
+            <div class="info-row">
+                <span class="chip-label" style="color: #c0392b;">
+                    <span class="chip-dot" style="background-color: #c0392b;"></span>
+                    赤 (2)
+                </span>
+                <div>枚数: <span class="current-count" id="red-count">0</span></div>
+            </div>
+            <div class="btn-group">
+                <button class="count-btn red-btn" data-count="0">0</button>
+                <button class="count-btn red-btn" data-count="1">1</button>
+                <button class="count-btn red-btn" data-count="2">2</button>
+                <button class="count-btn red-btn" data-count="3">3</button>
+                <button class="count-btn red-btn" data-count="4">4</button>
+                <button class="count-btn red-btn" data-count="5">5</button>
+                <button class="count-btn red-btn" data-count="6">6</button>
             </div>
         </div>
         <div class="chip-group" data-chip-id="black" data-value="3">
@@ -212,36 +276,59 @@
             </div>
         </div>
     </div>
+    
+    <hr>
 
-    <div id="total-result-area">
-        <div class="result-title">合計金額</div>
-        <span id="current-total-value">0</span>
+    <div class="top-results-row">
+        <div id="total-result-area">
+            <div class="result-title">入力チップの合計金額</div>
+            <span id="current-total-value">0</span>
+        </div>
+        
+        <div id="multiplier-area">
+            <div class="result-title">倍率を選択</div>
+            <div class="multiplier-btn-group">
+                <button class="multiplier-btn active" data-multiplier="1">× 1</button>
+                <button class="multiplier-btn" data-multiplier="2">× 2</button>
+                <button class="multiplier-btn" data-multiplier="3">× 3</button>
+                <button class="multiplier-btn" data-multiplier="4">× 4</button>
+                <button class="multiplier-btn" data-multiplier="5">× 5</button>
+            </div>
+        </div>
+    </div>
+    
+    <hr>
+
+    <div id="final-total-area">
+        <div class="result-title">最終合計金額</div>
+        <span id="final-total-value">0</span>
     </div>
 
     <div id="min-result-area">
-        <div class="result-title">最小枚数</div>
-        <span id="min-total-chips-count">0</span>枚
+        <div class="result-title">最小枚数内訳</div>
+        <div class="min-total-container">
+            <span id="min-total-chips-count">0</span>枚
+        </div>
         <ul id="min-combination-list"></ul>
     </div>
 
-    <button class="reset-btn" onclick="resetInputs()">リセット</button>
+    <button class="reset-btn" onclick="resetInputs()">全てリセット</button>
 
 </div>
 
 <script>
     const chipCounts = { 'red': 0, 'green': 0, 'black': 0, 'dark-blue': 0, 'light-blue': 0 };
-    // 最小枚数計算用データ (価値の高い順)
+    let currentMultiplier = 1;
+
+    // MIN_CHIPS_DATA (価値の高い順) - 赤=2, 緑=1
     const MIN_CHIPS_DATA = [
         { name: '青薄', value: 5, color: '#3498db', id: 'light-blue' },
         { name: '青濃', value: 4, color: '#2980b9', id: 'dark-blue' },
         { name: '黒', value: 3, color: '#2c3e50', id: 'black' },
-        { name: '緑', value: 2, color: '#27ae60', id: 'green' },
-        { name: '赤', value: 1, color: '#c0392b', id: 'red' }
+        { name: '赤', value: 2, color: '#c0392b', id: 'red' },
+        { name: '緑', value: 1, color: '#27ae60', id: 'green' }
     ];
 
-    /**
-     * 合計金額から最小枚数の組み合わせを計算し、表示する関数
-     */
     function calculateMinimumCombination(targetTotal) {
         let remaining = targetTotal;
         let totalChips = 0;
@@ -256,44 +343,39 @@
             }
             totalChips += count;
 
-            // *************************************************************
-            // ★変更点: 最小枚数内訳リストの表示を「色 (価値): 枚数」の形式に
-            // *************************************************************
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <span class="min-chip-label" style="color: ${chip.color};">・${chip.name} (${chip.value}):</span>
-                <span>${count}枚</span>
-            `;
-            resultList.appendChild(listItem);
+            if (count > 0) {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <span class="min-chip-label" style="color: ${chip.color};">・${chip.name} (${chip.value}):</span>
+                    <span>${count}枚</span>
+                `;
+                resultList.appendChild(listItem);
+            }
         });
 
         document.getElementById('min-total-chips-count').textContent = totalChips;
     }
 
-    /**
-     * 全ての計算（合計金額、最小枚数）を更新する主関数
-     */
     function updateAllCalculations() {
-        let currentTotal = 0;
+        let baseTotal = 0;
         
         document.querySelectorAll('.chip-group').forEach(group => {
             const chipId = group.dataset.chipId;
             const value = parseInt(group.dataset.value);
             const count = chipCounts[chipId];
             
-            currentTotal += (count * value);
-
-            // ★変更点: ユーザー選択の枚数表示を「枚数」のみに戻す
+            baseTotal += (count * value);
             group.querySelector('.current-count').textContent = count;
         });
         
-        document.getElementById('current-total-value').textContent = currentTotal;
-        calculateMinimumCombination(currentTotal);
+        document.getElementById('current-total-value').textContent = baseTotal;
+
+        const finalTotal = baseTotal * currentMultiplier;
+        document.getElementById('final-total-value').textContent = finalTotal;
+
+        calculateMinimumCombination(finalTotal);
     }
 
-    /**
-     * チップボタンクリック時の処理
-     */
     function handleCountClick(event) {
         const button = event.target.closest('.count-btn');
         if (!button) return;
@@ -312,9 +394,21 @@
         updateAllCalculations();
     }
 
-    /**
-     * リセット処理
-     */
+    function handleMultiplierClick(event) {
+        const button = event.target.closest('.multiplier-btn');
+        if (!button) return;
+
+        const newMultiplier = parseInt(button.dataset.multiplier);
+        currentMultiplier = newMultiplier;
+
+        document.querySelectorAll('.multiplier-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+
+        updateAllCalculations();
+    }
+
     function resetInputs() {
         for (const id in chipCounts) {
             chipCounts[id] = 0;
@@ -326,17 +420,24 @@
             });
             group.querySelector('.count-btn[data-count="0"]').classList.add('active');
         });
+        
+        currentMultiplier = 1;
+        document.querySelectorAll('.multiplier-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector('.multiplier-btn[data-multiplier="1"]').classList.add('active');
 
         updateAllCalculations();
     }
 
-    // 初期化処理
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('chip-selection-area').addEventListener('click', handleCountClick);
+        document.getElementById('multiplier-area').addEventListener('click', handleMultiplierClick);
 
         document.querySelectorAll('.count-btn[data-count="0"]').forEach(btn => {
             btn.classList.add('active');
         });
+        document.querySelector('.multiplier-btn[data-multiplier="1"]').classList.add('active');
 
         updateAllCalculations();
     });
