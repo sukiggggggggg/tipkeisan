@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チップ計算（レイアウト改善版）</title>
+    <title>チップ計算（粒度調整版）</title>
     <style>
         /* --- ページ全体を画面の高さに合わせる基本設定 --- */
         html, body {
@@ -11,17 +11,17 @@
             margin: 0;
             padding: 0;
         }
-        
-        /* --- 基本設定 --- */
+
+        /* --- 基本設定（変更なし） --- */
         body {
             font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
             padding: 3px;
             background-color: #f4f4f4;
-            font-size: 16px; 
+            font-size: 16px;
             box-sizing: border-box;
         }
         .container {
-            max-width: 500px; 
+            max-width: 500px;
             margin: 0 auto;
             padding: 8px 8px 12px 8px;
             background-color: #fff;
@@ -40,10 +40,10 @@
             justify-content: space-around;
         }
 
-        /* --- チップ入力グループ --- */
+        /* --- チップ入力グループ（変更なし） --- */
         .chip-group {
             margin-bottom: 5px;
-            padding: 8px; /* ▼変更: 内側の余白を少し広げる */
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 3px;
             display: flex;
@@ -54,7 +54,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px; /* ▼変更: ボタンとの間隔を調整 */
+            margin-bottom: 5px;
         }
         .chip-label {
             font-weight: bold;
@@ -75,18 +75,18 @@
         }
         .btn-group {
             display: flex;
-            gap: 4px; /* ▼変更: ボタン間隔を微調整 */
+            gap: 4px;
         }
         .count-btn {
             flex-grow: 1;
-            padding: 8px 0; /* ▼変更: ボタン高さを増加 */
+            padding: 8px 0;
             border-radius: 3px;
-            font-size: 14px; /* ▼変更: ボタンフォントサイズを増加 */
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
         }
-        
-        /* --- カラーボタン定義 --- */
+
+        /* --- カラーボタン定義（変更なし） --- */
         .red-btn { background-color: #f29a9a; border: 1px solid #c0392b; color: #333; }
         .green-btn { background-color: #90ee90; border: 1px solid #27ae60; color: #333; }
         .black-btn { background-color: #a0a0a0; border: 1px solid #2c3e50; color: #fff; }
@@ -97,47 +97,47 @@
         .count-btn.active.black-btn { background-color: #2c3e50; color: white; }
         .count-btn.active.dark-blue-btn { background-color: #2980b9; color: white; }
         .count-btn.active.light-blue-btn { background-color: #3498db; color: white; }
-        
-        /* === 横並びコンテナのスタイル === */
+
+        /* === 横並びコンテナのスタイル（変更なし） === */
         .top-results-row {
             display: flex;
             gap: 8px;
             margin-top: 6px;
         }
         .top-results-row > div {
-            flex: 1; 
+            flex: 1;
             margin-top: 0 !important;
         }
 
-        /* --- 結果エリアの共通スタイル --- */
+        /* --- 結果エリアの共通スタイル（変更なし） --- */
         #total-result-area, #multiplier-area, #final-total-area, #min-result-area {
             padding: 6px;
             border-radius: 3px;
             text-align: center;
         }
-        .result-title { 
+        .result-title {
             font-size: 13px;
-            font-weight: bold; 
+            font-weight: bold;
             margin-bottom: 2px;
         }
-        
-        /* 合計金額エリア */
+
+        /* 合計金額エリア（変更なし） */
         #total-result-area { background-color: #e6f7ff; }
         #current-total-value { font-size: 18px; font-weight: bold; color: #0056b3; }
-        
-        /* 倍率エリア */
+
+        /* 倍率エリア（変更なし） */
         #multiplier-area {
             background-color: #ffffe0;
         }
         .multiplier-btn-group {
             display: flex;
-            gap: 4px; /* ▼変更: ボタン間隔を微調整 */
+            gap: 4px;
             justify-content: center;
         }
         .multiplier-btn {
-            width: 38px; /* ▼変更: ボタン幅を増加 */
-            padding: 6px 0; /* ▼変更: ボタン高さを増加 */
-            font-size: 14px; /* ▼変更: フォントを増加 */
+            width: 38px;
+            padding: 6px 0;
+            font-size: 14px;
             background-color: #f0f0f0;
             border: 1px solid #999;
             border-radius: 3px;
@@ -147,57 +147,86 @@
             color: white;
             border-color: #cc6200;
         }
+        
+        /* --- 粒度選択エリアのスタイル (新規/変更) --- */
+        #granularity-area { /* ▼新規エリア */
+            padding: 6px;
+            border-radius: 3px;
+            text-align: center;
+            background-color: #e0f0e0; /* 新規背景色 */
+            margin-top: 6px; /* 追加 */
+        }
+        .granularity-btn-group {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+        .granularity-btn {
+            flex-grow: 1; /* ボタン幅を均等に */
+            padding: 6px 0;
+            font-size: 14px;
+            background-color: #f0f0f0;
+            border: 1px solid #999;
+            border-radius: 3px;
+        }
+        .granularity-btn.active {
+            background-color: #27ae60;
+            color: white;
+            border-color: #248f57;
+        }
+        /* ---------------------------------------------------- */
 
-        /* 最終合計と最小枚数エリア */
+        /* 最終合計と最小枚数エリア（変更なし） */
         #final-total-area {
             margin-top: 6px;
             background-color: #f0f8ff;
-            border: 1px solid #0056b3; 
+            border: 1px solid #0056b3;
         }
         #final-total-value { font-size: 24px; font-weight: bold; color: #0056b3; }
 
         #min-result-area {
-            border: 1px solid #ff7b00; 
+            border: 1px solid #ff7b00;
             background-color: #fff0e6;
+            margin-top: 6px; /* 追加 */
         }
         .min-total-container {
             font-size: 16px;
             font-weight: bold;
         }
-        #min-total-chips-count { 
+        #min-total-chips-count {
             font-size: 18px;
             color: #d82d03;
         }
 
-        #min-combination-list { 
-            list-style: none; 
+        #min-combination-list {
+            list-style: none;
             padding: 0 4px;
             margin-top: 4px;
             font-size: 14px;
-            text-align: left; 
-            min-height: 60px; /* ▼追加: 最小高さを設定（約3行分）。行数が変わってもレイアウトが崩れないようにします。 */
+            text-align: left;
+            min-height: 60px;
         }
-        #min-combination-list li { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 2px 0; /* ▼変更: 行間を少し広げて見やすく */
+        #min-combination-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
         }
-        
-        /* --- リセットボタン --- */
+
+        /* --- リセットボタン（変更なし） --- */
         .reset-btn {
             display: block;
             width: 100%;
-            padding: 10px; /* ▼変更: ボタン高さを増加 */
+            padding: 10px;
             margin-top: 12px;
             background-color: #ccc;
             border: none;
             border-radius: 3px;
-            font-size: 16px; /* ▼変更: フォントサイズを増加 */
+            font-size: 16px;
             cursor: pointer;
             font-weight: bold;
         }
-        
-        /* 区切り線 */
+
+        /* 区切り線（変更なし） */
         hr {
             margin: 5px 0;
             border: 0;
@@ -300,52 +329,59 @@
             </div>
         </div>
     </div>
-    
-    <hr>
 
-    <div class="top-results-row">
-        <div id="total-result-area">
-            <div class="result-title">入力チップの合計金額</div>
-            <span id="current-total-value">0</span>
-        </div>
-        
-        <div id="multiplier-area">
-            <div class="result-title">倍率を選択</div>
-            <div class="multiplier-btn-group">
-                <button class="multiplier-btn active" data-multiplier="1">× 1</button>
-                <button class="multiplier-btn" data-multiplier="2">× 2</button>
-                <button class="multiplier-btn" data-multiplier="3">× 3</button>
-                <button class="multiplier-btn" data-multiplier="4">× 4</button>
-                <button class="multiplier-btn" data-multiplier="5">× 5</button>
-            </div>
-        </div>
-    </div>
-    
-    <hr>
+<hr>
 
-    <div id="final-total-area">
-        <div class="result-title">最終合計金額</div>
-        <span id="final-total-value">0</span>
+<div class="top-results-row">
+    <div id="total-result-area">
+        <div class="result-title">入力チップの合計金額</div>
+        <span id="current-total-value">0</span>
     </div>
 
-    <div id="min-result-area">
-        <div class="result-title">最小枚数内訳</div>
-        <div class="min-total-container">
-            <span id="min-total-chips-count">0</span>枚
+    <div id="multiplier-area">
+        <div class="result-title">倍率を選択</div>
+        <div class="multiplier-btn-group">
+            <button class="multiplier-btn active" data-multiplier="1">× 1</button>
+            <button class="multiplier-btn" data-multiplier="2">× 2</button>
+            <button class="multiplier-btn" data-multiplier="3">× 3</button>
+            <button class="multiplier-btn" data-multiplier="4">× 4</button>
+            <button class="multiplier-btn" data-multiplier="5">× 5</button>
         </div>
-        <ul id="min-combination-list"></ul>
     </div>
+</div>
 
-    <button class="reset-btn" onclick="resetInputs()">全てリセット</button>
+<div id="granularity-area"> <div class="result-title">最小枚数計算の粒度</div>
+    <div class="granularity-btn-group">
+        <button class="granularity-btn active" data-granularity="default">デフォルト (1, 5)</button>
+        <button class="granularity-btn" data-granularity="fine">細かい (1, 2, 5)</button>
+        <button class="granularity-btn" data-granularity="very-fine">とても細かい (全種)</button>
+    </div>
+</div>
 
+<hr>
+
+<div id="final-total-area">
+    <div class="result-title">最終合計金額</div>
+    <span id="final-total-value">0</span>
+</div>
+
+<div id="min-result-area">
+    <div class="result-title">最小枚数内訳</div>
+    <div class="min-total-container">
+        <span id="min-total-chips-count">0</span>枚
+    </div>
+    <ul id="min-combination-list"></ul>
+</div>
+
+<button class="reset-btn" onclick="resetInputs()">全てリセット</button>
 </div>
 
 <script>
     const chipCounts = { 'red': 0, 'green': 0, 'black': 0, 'dark-blue': 0, 'light-blue': 0 };
     let currentMultiplier = 1;
 
-    // MIN_CHIPS_DATA (価値の高い順)
-    const MIN_CHIPS_DATA = [
+    // 定義済みの全チップデータ（価値の高い順）
+    const ALL_CHIPS_DATA = [
         { name: '青薄', value: 5, color: '#3498db', id: 'light-blue' },
         { name: '青濃', value: 4, color: '#2980b9', id: 'dark-blue' },
         { name: '黒', value: 3, color: '#2c3e50', id: 'black' },
@@ -353,17 +389,33 @@
         { name: '緑', value: 1, color: '#27ae60', id: 'green' }
     ];
 
+    // 粒度ごとのチップセットを定義
+    const CHIP_SETS = {
+        // 緑(1), 青薄(5) のみを使用
+        'default': ALL_CHIPS_DATA.filter(chip => chip.value === 5 || chip.value === 1),
+        // 緑(1), 赤(2), 青薄(5) のみを使用
+        'fine': ALL_CHIPS_DATA.filter(chip => chip.value === 5 || chip.value === 2 || chip.value === 1),
+        // 全てのチップを使用 (1, 2, 3, 4, 5)
+        'very-fine': ALL_CHIPS_DATA
+    };
+    
+    // 初期粒度設定
+    let currentGranularity = 'default';
+
     function calculateMinimumCombination(targetTotal) {
         let remaining = targetTotal;
         let totalChips = 0;
         const resultList = document.getElementById('min-combination-list');
         resultList.innerHTML = '';
+        
+        // 選択された粒度に対応するチップセットを使用
+        const selectedChips = CHIP_SETS[currentGranularity]; 
 
-        MIN_CHIPS_DATA.forEach(chip => {
+        selectedChips.forEach(chip => {
             let count = 0;
             if (remaining >= chip.value) {
                 count = Math.floor(remaining / chip.value);
-                remaining %= chip.value; 
+                remaining %= chip.value;
             }
             totalChips += count;
 
@@ -376,22 +428,56 @@
                 resultList.appendChild(listItem);
             }
         });
-
+        
+        // 1枚チップが使用されず、余りがある場合は、緑チップ(1)で補填（念のため）
+        if (remaining > 0) {
+            const greenChip = ALL_CHIPS_DATA.find(c => c.value === 1);
+            if (greenChip) {
+                 totalChips += remaining;
+                 const existingGreen = resultList.querySelector(`.min-chip-label[style*="${greenChip.color}"]`);
+                 if (existingGreen) {
+                     // 既存の緑の枚数を更新
+                     const countSpan = existingGreen.nextElementSibling;
+                     const currentCount = parseInt(countSpan.textContent.replace('枚', '')) || 0;
+                     countSpan.textContent = `${currentCount + remaining}枚`;
+                 } else {
+                     // 新しく緑の行を追加
+                     const listItem = document.createElement('li');
+                     listItem.innerHTML = `
+                        <span class="min-chip-label" style="color: ${greenChip.color};">・${greenChip.name} (${greenChip.value}):</span>
+                        <span>${remaining}枚</span>
+                     `;
+                     resultList.appendChild(listItem);
+                 }
+                 remaining = 0; // 残りは0
+            }
+        }
+        
+        // 最小枚数リストが空の場合にメッセージを表示
+        if (targetTotal > 0 && totalChips === 0) {
+            const listItem = document.createElement('li');
+            listItem.textContent = `計算できるチップがありません。`;
+            resultList.appendChild(listItem);
+        } else if (targetTotal === 0) {
+            // 合計0の場合は空にする
+             resultList.innerHTML = '';
+        }
+        
         document.getElementById('min-total-chips-count').textContent = totalChips;
     }
 
     function updateAllCalculations() {
         let baseTotal = 0;
-        
+
         document.querySelectorAll('.chip-group').forEach(group => {
             const chipId = group.dataset.chipId;
             const value = parseInt(group.dataset.value);
             const count = chipCounts[chipId];
-            
+
             baseTotal += (count * value);
             group.querySelector('.current-count').textContent = count;
         });
-        
+
         document.getElementById('current-total-value').textContent = baseTotal;
 
         const finalTotal = baseTotal * currentMultiplier;
@@ -432,6 +518,25 @@
 
         updateAllCalculations();
     }
+    
+    // ▼新規追加: 粒度選択ボタンのハンドラ
+    function handleGranularityClick(event) {
+        const button = event.target.closest('.granularity-btn');
+        if (!button) return;
+        
+        const newGranularity = button.dataset.granularity;
+        if (currentGranularity === newGranularity) return; // 既に選択されている場合は何もしない
+
+        currentGranularity = newGranularity;
+        
+        document.querySelectorAll('.granularity-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+        
+        updateAllCalculations();
+    }
+    // ----------------------------------------
 
     function resetInputs() {
         for (const id in chipCounts) {
@@ -444,12 +549,19 @@
             });
             group.querySelector('.count-btn[data-count="0"]').classList.add('active');
         });
-        
+
         currentMultiplier = 1;
         document.querySelectorAll('.multiplier-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector('.multiplier-btn[data-multiplier="1"]').classList.add('active');
+        
+        // 粒度もデフォルトにリセット
+        currentGranularity = 'default';
+        document.querySelectorAll('.granularity-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector('.granularity-btn[data-granularity="default"]').classList.add('active');
 
         updateAllCalculations();
     }
@@ -457,11 +569,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('chip-selection-area').addEventListener('click', handleCountClick);
         document.getElementById('multiplier-area').addEventListener('click', handleMultiplierClick);
+        document.getElementById('granularity-area').addEventListener('click', handleGranularityClick); // ▼新規: イベントリスナーを追加
 
         document.querySelectorAll('.count-btn[data-count="0"]').forEach(btn => {
             btn.classList.add('active');
         });
         document.querySelector('.multiplier-btn[data-multiplier="1"]').classList.add('active');
+        document.querySelector('.granularity-btn[data-granularity="default"]').classList.add('active'); // ▼新規: デフォルト粒度を設定
 
         updateAllCalculations();
     });
