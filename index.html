@@ -3,48 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チップ計算（超縦コンパクト横並び版）</title>
+    <title>チップ計算（レイアウト改善版）</title>
     <style>
+        /* --- ページ全体を画面の高さに合わせる基本設定 --- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
         /* --- 基本設定 --- */
         body {
             font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-            margin: 0; 
-            padding: 3px; /* bodyのパディングをさらに削減 */
+            padding: 3px;
             background-color: #f4f4f4;
-            font-size: 16px; /* 全体のフォントサイズを微調整 */
+            font-size: 16px; 
+            box-sizing: border-box;
         }
         .container {
             max-width: 500px; 
             margin: 0 auto;
-            padding: 8px 8px 12px 8px; /* 上下左右のパディングをさらに削減、下はリセットボタン用に確保 */
+            padding: 8px 8px 12px 8px;
             background-color: #fff;
-            border-radius: 5px; /* 角を少しシャープに */
+            border-radius: 5px;
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        #chip-selection-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
         }
 
         /* --- チップ入力グループ --- */
         .chip-group {
-            margin-bottom: 5px; /* グループ間の余白をさらに削減 */
-            padding: 6px; /* パディングを削減 */
+            margin-bottom: 5px;
+            padding: 8px; /* ▼変更: 内側の余白を少し広げる */
             border: 1px solid #ddd;
             border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3px; /* 情報行下の余白を削減 */
+            margin-bottom: 5px; /* ▼変更: ボタンとの間隔を調整 */
         }
         .chip-label {
             font-weight: bold;
-            font-size: 16px; /* チップ名サイズを微調整 */
+            font-size: 16px;
             display: flex;
             align-items: center;
         }
         .chip-dot {
-            width: 15px; /* ドットサイズを削減 */
+            width: 15px;
             height: 15px;
-            margin-right: 6px; /* ドットとテキストの間隔を削減 */
+            margin-right: 6px;
             border: 1px solid #33333333;
         }
         .current-count {
@@ -54,18 +75,18 @@
         }
         .btn-group {
             display: flex;
-            gap: 3px; /* ボタン間隔をさらに詰める */
+            gap: 4px; /* ▼変更: ボタン間隔を微調整 */
         }
         .count-btn {
             flex-grow: 1;
-            padding: 4px 0; /* ボタン高さを削減 */
-            border-radius: 2px;
-            font-size: 12px; /* ボタンフォントサイズを削減 */
+            padding: 8px 0; /* ▼変更: ボタン高さを増加 */
+            border-radius: 3px;
+            font-size: 14px; /* ▼変更: ボタンフォントサイズを増加 */
             font-weight: bold;
             cursor: pointer;
         }
         
-        /* --- カラーボタン定義 (変更なし) --- */
+        /* --- カラーボタン定義 --- */
         .red-btn { background-color: #f29a9a; border: 1px solid #c0392b; color: #333; }
         .green-btn { background-color: #90ee90; border: 1px solid #27ae60; color: #333; }
         .black-btn { background-color: #a0a0a0; border: 1px solid #2c3e50; color: #fff; }
@@ -80,8 +101,8 @@
         /* === 横並びコンテナのスタイル === */
         .top-results-row {
             display: flex;
-            gap: 8px; /* 横の隙間を削減 */
-            margin-top: 6px; /* 上マージンを削減 */
+            gap: 8px;
+            margin-top: 6px;
         }
         .top-results-row > div {
             flex: 1; 
@@ -90,19 +111,19 @@
 
         /* --- 結果エリアの共通スタイル --- */
         #total-result-area, #multiplier-area, #final-total-area, #min-result-area {
-            padding: 6px; /* パディングを削減 */
+            padding: 6px;
             border-radius: 3px;
             text-align: center;
         }
         .result-title { 
-            font-size: 13px; /* タイトルをさらに小さく */
+            font-size: 13px;
             font-weight: bold; 
-            margin-bottom: 2px; /* タイトル下マージンを削減 */
+            margin-bottom: 2px;
         }
         
         /* 合計金額エリア */
         #total-result-area { background-color: #e6f7ff; }
-        #current-total-value { font-size: 18px; font-weight: bold; color: #0056b3; } /* サイズをさらに小さく */
+        #current-total-value { font-size: 18px; font-weight: bold; color: #0056b3; }
         
         /* 倍率エリア */
         #multiplier-area {
@@ -110,15 +131,16 @@
         }
         .multiplier-btn-group {
             display: flex;
-            gap: 3px; /* ボタン間隔をさらに詰める */
+            gap: 4px; /* ▼変更: ボタン間隔を微調整 */
             justify-content: center;
         }
         .multiplier-btn {
-            width: 30px; /* ボタン幅を削減 */
-            padding: 3px 0; /* ボタン高さを削減 */
-            font-size: 12px; /* フォントを削減 */
+            width: 38px; /* ▼変更: ボタン幅を増加 */
+            padding: 6px 0; /* ▼変更: ボタン高さを増加 */
+            font-size: 14px; /* ▼変更: フォントを増加 */
             background-color: #f0f0f0;
             border: 1px solid #999;
+            border-radius: 3px;
         }
         .multiplier-btn.active {
             background-color: #ff7b00;
@@ -128,54 +150,56 @@
 
         /* 最終合計と最小枚数エリア */
         #final-total-area {
-            margin-top: 6px; /* 横並びコンテナの下に余白を追加 */
+            margin-top: 6px;
             background-color: #f0f8ff;
             border: 1px solid #0056b3; 
         }
-        #final-total-value { font-size: 24px; font-weight: bold; color: #0056b3; } /* サイズを微調整 */
+        #final-total-value { font-size: 24px; font-weight: bold; color: #0056b3; }
 
         #min-result-area {
             border: 1px solid #ff7b00; 
             background-color: #fff0e6;
         }
         .min-total-container {
-            font-size: 16px; /* フォントサイズを微調整 */
+            font-size: 16px;
             font-weight: bold;
         }
         #min-total-chips-count { 
-            font-size: 18px; /* フォントサイズを微調整 */
+            font-size: 18px;
             color: #d82d03;
         }
 
         #min-combination-list { 
             list-style: none; 
-            padding: 0 4px; /* パディングを削減 */
-            margin-top: 4px; /* マージンを削減 */
-            font-size: 14px; /* フォントサイズを削減 */
+            padding: 0 4px;
+            margin-top: 4px;
+            font-size: 14px;
             text-align: left; 
+            min-height: 60px; /* ▼追加: 最小高さを設定（約3行分）。行数が変わってもレイアウトが崩れないようにします。 */
         }
         #min-combination-list li { 
             display: flex; 
             justify-content: space-between; 
-            padding: 1px 0; /* リスト行間の余白を最小限に */
+            padding: 2px 0; /* ▼変更: 行間を少し広げて見やすく */
         }
         
         /* --- リセットボタン --- */
         .reset-btn {
             display: block;
             width: 100%;
-            padding: 6px; /* ボタン高さを削減 */
-            margin-top: 12px; /* マージンを調整 */
+            padding: 10px; /* ▼変更: ボタン高さを増加 */
+            margin-top: 12px;
             background-color: #ccc;
             border: none;
             border-radius: 3px;
-            font-size: 14px;
+            font-size: 16px; /* ▼変更: フォントサイズを増加 */
             cursor: pointer;
+            font-weight: bold;
         }
         
         /* 区切り線 */
         hr {
-            margin: 5px 0; /* 区切り線の上下余白を最小限に */
+            margin: 5px 0;
             border: 0;
             border-top: 1px solid #ccc;
         }
@@ -320,7 +344,7 @@
     const chipCounts = { 'red': 0, 'green': 0, 'black': 0, 'dark-blue': 0, 'light-blue': 0 };
     let currentMultiplier = 1;
 
-    // MIN_CHIPS_DATA (価値の高い順) - 赤=2, 緑=1
+    // MIN_CHIPS_DATA (価値の高い順)
     const MIN_CHIPS_DATA = [
         { name: '青薄', value: 5, color: '#3498db', id: 'light-blue' },
         { name: '青濃', value: 4, color: '#2980b9', id: 'dark-blue' },
